@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Memória do Futebol</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="bg bg-1"></div>
+  <div class="bg bg-2"></div>
+  <div class="bg bg-3"></div>
+
+  <main class="app-shell">
+    <!-- TELA INICIAL -->
+    <section id="setupScreen" class="screen screen-active">
+      <div class="hero-card">
+        <div class="hero-top">
+          <span class="badge">⚽ Multiplayer • Offline • Responsivo</span>
+          <h1>Memória do Futebol</h1>
+          <p class="hero-text">
+            Uma versão caprichada do jogo da memória com 2 ou 4 jogadores,
+            animação ao virar as cartas, cronômetro, efeitos sonoros, tela de campeão
+            e visual inspirado em estádio de futebol.
+          </p>
+        </div>
+
+        <div class="setup-grid">
+          <div class="setup-box">
+            <h2>Modo da partida</h2>
+            <div class="mode-switch">
+              <button class="mode-btn active" data-mode="2" type="button">
+                <strong>2 jogadores</strong>
+                <span>10 pares</span>
+              </button>
+
+              <button class="mode-btn" data-mode="4" type="button">
+                <strong>4 jogadores</strong>
+                <span>15 pares</span>
+              </button>
+            </div>
+
+            <div class="rules-card">
+              <h3>Regras especiais</h3>
+              <p>Quem fizer 4 pontos primeiro vence.</p>
+              <p>Acertou um par? Continua jogando.</p>
+              <p>A cada 2 acertos seguidos, ganha +1 bola bônus.</p>
+              <p>Com 3 acertos seguidos, pode virar 3 cartas.</p>
+              <p>Se errar 3 rodadas seguidas, perde a próxima vez.</p>
+              <p>Cada carta deve ser virada em até 10 segundos.</p>
+            </div>
+          </div>
+
+          <div class="setup-box">
+            <h2>Jogadores</h2>
+            <form id="setupForm" class="setup-form">
+              <input type="hidden" id="modeInput" value="2" />
+              <div id="playersInputs" class="players-inputs"></div>
+
+              <button class="main-btn start-btn" type="submit">
+                Começar partida
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TELA DO JOGO -->
+    <section id="gameScreen" class="screen hidden">
+      <div class="game-layout">
+        <header class="hud">
+          <div class="hud-card current-turn-card">
+            <span class="hud-label">Vez de</span>
+            <strong id="currentPlayerName">Jogador 1</strong>
+            <small id="turnInfo">Vire 2 cartas</small>
+          </div>
+
+          <div class="hud-card timer-card">
+            <div id="timerRing" class="timer-ring">
+              <div class="timer-core">
+                <strong id="timerValue">10</strong>
+                <span>seg</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="hud-card action-card">
+            <button id="restartBtn" class="ghost-btn" type="button">Reiniciar</button>
+            <button id="homeBtn" class="ghost-btn" type="button">Tela inicial</button>
+            <button id="soundBtn" class="ghost-btn" type="button">Som: ligado</button>
+          </div>
+        </header>
+
+        <section class="message-strip">
+          <div id="messageBox" class="message-box">
+            Prepare-se para a partida!
+          </div>
+        </section>
+
+        <section id="playersBoard" class="players-board"></section>
+
+        <section class="board-stage">
+          <div class="board-frame">
+            <div class="field-lines"></div>
+            <div id="board" class="board mode-2"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <!-- TELA / MODAL DO VENCEDOR -->
+  <div id="winnerModal" class="winner-overlay hidden">
+    <div class="winner-card">
+      <div class="winner-glow"></div>
+      <div class="winner-icon">🏆</div>
+      <h2 id="winnerTitle">Jogador venceu!</h2>
+      <p id="winnerSubtitle">
+        Parabéns pela partida!
+      </p>
+
+      <div id="winnerStats" class="winner-stats"></div>
+
+      <div class="winner-actions">
+        <button id="playAgainBtn" class="main-btn" type="button">
+          Jogar novamente
+        </button>
+        <button id="backToSetupBtn" class="ghost-btn" type="button">
+          Trocar jogadores
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
