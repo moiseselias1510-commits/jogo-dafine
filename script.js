@@ -1,23 +1,29 @@
 const WIN_SCORE = 4;
 const CARD_TIME = 10;
 
+/*
+  Troque os arquivos em assets/cards/ pelas suas imagens.
+  Se alguma imagem não existir ainda, o jogo mostra um emoji no lugar.
+*/
 const CARD_LIBRARY = [
-  { id: "bola", nome: "Bola", emoji: "⚽" },
-  { id: "chuteira", nome: "Chuteira", emoji: "🥾" },
-  { id: "trofeu", nome: "Troféu", emoji: "🏆" },
-  { id: "luva", nome: "Luva de Goleiro", emoji: "🧤" },
-  { id: "gol", nome: "Gol", emoji: "🥅" },
-  { id: "bandeira", nome: "Bandeira", emoji: "🚩" },
-  { id: "camisa", nome: "Camisa", emoji: "👕" },
-  { id: "cartao", nome: "Cartão", emoji: "🟨" },
-  { id: "estadio", nome: "Estádio", emoji: "🏟️" },
-  { id: "medalha", nome: "Medalha", emoji: "🎖️" },
-  { id: "apito", nome: "Apito", emoji: "📯" },
-  { id: "tecnico", nome: "Técnico", emoji: "🧢" },
-  { id: "torcida", nome: "Torcida", emoji: "📣" },
-  { id: "capitao", nome: "Capitão", emoji: "👑" },
-  { id: "campo", nome: "Campo", emoji: "🌱" }
+  { id: "bola", nome: "Bola", imagem: "assets/cards/bola.png", emoji: "⚽" },
+  { id: "chuteira", nome: "Chuteira", imagem: "assets/cards/chuteira.png", emoji: "🥾" },
+  { id: "trofeu", nome: "Troféu", imagem: "assets/cards/trofeu.png", emoji: "🏆" },
+  { id: "luva", nome: "Luva", imagem: "assets/cards/luva.png", emoji: "🧤" },
+  { id: "gol", nome: "Gol", imagem: "assets/cards/gol.png", emoji: "🥅" },
+  { id: "bandeira", nome: "Bandeira", imagem: "assets/cards/bandeira.png", emoji: "🚩" },
+  { id: "camisa", nome: "Camisa", imagem: "assets/cards/camisa.png", emoji: "👕" },
+  { id: "cartao", nome: "Cartão", imagem: "assets/cards/cartao.png", emoji: "🟨" },
+  { id: "estadio", nome: "Estádio", imagem: "assets/cards/estadio.png", emoji: "🏟️" },
+  { id: "medalha", nome: "Medalha", imagem: "assets/cards/medalha.png", emoji: "🎖️" },
+  { id: "apito", nome: "Apito", imagem: "assets/cards/apito.png", emoji: "📯" },
+  { id: "tecnico", nome: "Técnico", imagem: "assets/cards/tecnico.png", emoji: "🧢" },
+  { id: "torcida", nome: "Torcida", imagem: "assets/cards/torcida.png", emoji: "📣" },
+  { id: "capitao", nome: "Capitão", imagem: "assets/cards/capitao.png", emoji: "👑" },
+  { id: "campo", nome: "Campo", imagem: "assets/cards/campo.png", emoji: "🌱" }
 ];
+
+const BACK_IMAGE = "assets/cards/costas.png";
 
 const state = {
   mode: 2,
@@ -30,8 +36,7 @@ const state = {
   locked: false,
   gameOver: false,
   timerInterval: null,
-  timeLeft: CARD_TIME,
-  soundOn: true
+  timeLeft: CARD_TIME
 };
 
 const setupScreen = document.getElementById("setupScreen");
@@ -51,10 +56,6 @@ const playersBoard = document.getElementById("playersBoard");
 const board = document.getElementById("board");
 const messageBox = document.getElementById("messageBox");
 
-const restartBtn = document.getElementById("restartBtn");
-const homeBtn = document.getElementById("homeBtn");
-const soundBtn = document.getElementById("soundBtn");
-
 const winnerTitle = document.getElementById("winnerTitle");
 const winnerSubtitle = document.getElementById("winnerSubtitle");
 const winnerStats = document.getElementById("winnerStats");
@@ -70,14 +71,15 @@ const audioManager = {
       if (!AudioCtx) return null;
       this.ctx = new AudioCtx();
     }
+
     if (this.ctx.state === "suspended") {
       this.ctx.resume();
     }
+
     return this.ctx;
   },
 
   playTone(type, startFreq, endFreq, duration = 0.2, volume = 0.05, delay = 0) {
-    if (!state.soundOn) return;
     const ctx = this.ensure();
     if (!ctx) return;
 
@@ -99,8 +101,7 @@ const audioManager = {
     osc.stop(ctx.currentTime + delay + duration + 0.03);
   },
 
-  playNoise(duration = 0.35, volume = 0.04) {
-    if (!state.soundOn) return;
+  playNoise(duration = 0.3, volume = 0.03) {
     const ctx = this.ensure();
     if (!ctx) return;
 
@@ -108,7 +109,7 @@ const audioManager = {
     const data = buffer.getChannelData(0);
 
     for (let i = 0; i < data.length; i++) {
-      data[i] = (Math.random() * 2 - 1) * 0.6;
+      data[i] = (Math.random() * 2 - 1) * 0.5;
     }
 
     const source = ctx.createBufferSource();
@@ -118,7 +119,7 @@ const audioManager = {
     source.buffer = buffer;
     filter.type = "bandpass";
     filter.frequency.value = 900;
-    filter.Q.value = 0.7;
+    filter.Q.value = 0.8;
 
     gain.gain.setValueAtTime(volume, ctx.currentTime);
     gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
@@ -131,30 +132,28 @@ const audioManager = {
   },
 
   flip() {
-    this.playTone("triangle", 920, 620, 0.12, 0.035);
+    this.playTone("triangle", 900, 650, 0.12, 0.03);
   },
 
   match() {
-    this.playTone("sine", 520, 720, 0.18, 0.05);
-    this.playTone("sine", 720, 920, 0.15, 0.04, 0.12);
-    this.playNoise(0.18, 0.02);
+    this.playTone("sine", 520, 760, 0.15, 0.045);
+    this.playTone("sine", 760, 940, 0.14, 0.04, 0.1);
   },
 
   bonus() {
-    this.playTone("triangle", 600, 850, 0.12, 0.05);
-    this.playTone("triangle", 850, 1080, 0.14, 0.05, 0.12);
-    this.playTone("triangle", 1080, 1320, 0.16, 0.04, 0.26);
+    this.playTone("triangle", 650, 900, 0.12, 0.05);
+    this.playTone("triangle", 900, 1200, 0.16, 0.05, 0.12);
   },
 
   timeout() {
-    this.playTone("sawtooth", 520, 240, 0.35, 0.04);
+    this.playTone("sawtooth", 520, 240, 0.35, 0.03);
   },
 
   win() {
-    this.playTone("triangle", 700, 980, 0.18, 0.06);
-    this.playTone("triangle", 980, 1280, 0.2, 0.06, 0.18);
-    this.playTone("triangle", 1280, 1580, 0.24, 0.06, 0.42);
-    this.playNoise(1.1, 0.05);
+    this.playTone("triangle", 700, 980, 0.18, 0.05);
+    this.playTone("triangle", 980, 1260, 0.2, 0.05, 0.16);
+    this.playTone("triangle", 1260, 1500, 0.22, 0.05, 0.38);
+    this.playNoise(0.9, 0.04);
   }
 };
 
@@ -173,9 +172,6 @@ function bindEvents() {
   });
 
   setupForm.addEventListener("submit", startGameFromForm);
-  restartBtn.addEventListener("click", restartSamePlayers);
-  homeBtn.addEventListener("click", goToSetup);
-  soundBtn.addEventListener("click", toggleSound);
   playAgainBtn.addEventListener("click", restartSamePlayers);
   backToSetupBtn.addEventListener("click", goToSetup);
 
@@ -245,7 +241,6 @@ function createNewMatch(mode, names) {
     missStreak: 0,
     maxHitStreak: 0,
     matches: 0,
-    misses: 0,
     bonusPoints: 0,
     skipNextTurn: false
   }));
@@ -276,23 +271,19 @@ function restartSamePlayers() {
 function goToSetup() {
   stopTimer();
   state.gameOver = true;
-  gameScreen.classList.add("hidden");
   winnerModal.classList.add("hidden");
+  gameScreen.classList.add("hidden");
   setupScreen.classList.remove("hidden");
-}
-
-function toggleSound() {
-  state.soundOn = !state.soundOn;
-  soundBtn.textContent = state.soundOn ? "Som: ligado" : "Som: desligado";
-  if (state.soundOn) audioManager.ensure();
 }
 
 function createDeck(pairCount) {
   const selected = CARD_LIBRARY.slice(0, pairCount);
+
   const doubled = [...selected, ...selected].map((item, index) => ({
     uid: `${item.id}-${index}`,
     pairId: item.id,
     nome: item.nome,
+    imagem: item.imagem,
     emoji: item.emoji,
     opened: false,
     matched: false
@@ -303,10 +294,12 @@ function createDeck(pairCount) {
 
 function shuffle(array) {
   const arr = [...array];
+
   for (let i = arr.length - 1; i > 0; i--) {
     const randomIndex = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[randomIndex]] = [arr[randomIndex], arr[i]];
   }
+
   return arr;
 }
 
@@ -322,22 +315,17 @@ function renderPlayers() {
     }
 
     if (player.skipNextTurn) {
-      card.classList.add("warning");
+      card.classList.add("skip");
     }
 
     const balls = Array.from({ length: WIN_SCORE }, (_, i) => {
-      return `<span class="football ${i < Math.min(player.score, WIN_SCORE) ? "" : "empty"}">⚽</span>`;
+      return `<span class="football ${i < player.score ? "" : "empty"}">⚽</span>`;
     }).join("");
 
     card.innerHTML = `
+      ${player.skipNextTurn ? `<div class="skip-tag">Pula vez</div>` : ""}
       <div class="player-name">${player.name}</div>
       <div class="score-row">${balls}</div>
-      <div class="player-meta">
-        <span class="meta-pill">Pares: ${player.matches}</span>
-        <span class="meta-pill">Sequência: ${player.hitStreak}</span>
-        <span class="meta-pill">Erros: ${player.misses}</span>
-        ${player.skipNextTurn ? `<span class="meta-pill danger">Perde a próxima vez</span>` : ""}
-      </div>
     `;
 
     playersBoard.appendChild(card);
@@ -357,11 +345,27 @@ function buildBoard() {
     button.innerHTML = `
       <div class="card-inner">
         <div class="card-face card-back">
-          <div class="back-emblem">⚽</div>
+          <div class="back-wrap">
+            <img
+              class="card-back-image"
+              src="${BACK_IMAGE}"
+              alt="Verso da carta"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="back-fallback">⚽</div>
+          </div>
         </div>
+
         <div class="card-face card-front">
-          <div class="card-icon">${card.emoji}</div>
-          <div class="card-title">${card.nome}</div>
+          <div class="card-art">
+            <img
+              class="card-image"
+              src="${card.imagem}"
+              alt="${card.nome}"
+              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+            />
+            <div class="card-fallback">${card.emoji}</div>
+          </div>
         </div>
       </div>
     `;
@@ -387,7 +391,7 @@ function updateBoardUI() {
 function updateCurrentTurnUI() {
   const player = state.players[state.currentPlayer];
   currentPlayerName.textContent = player.name;
-  turnInfo.textContent = state.allowedFlips === 3 ? "Poder ativo: vire 3 cartas" : "Vire 2 cartas";
+  turnInfo.textContent = state.allowedFlips === 3 ? "Vire 3 cartas" : "Vire 2 cartas";
   renderPlayers();
 }
 
@@ -427,9 +431,11 @@ function resetTimerForNextPick() {
 
 function updateTimerUI(seconds) {
   timerValue.textContent = seconds;
+
   const percentage = Math.max(0, seconds / CARD_TIME);
   const degrees = percentage * 360;
-  const color = seconds <= 3 ? "#ff6f6f" : seconds <= 6 ? "#ffd84d" : "#3ae183";
+  const color = seconds <= 3 ? "#ff6f6f" : seconds <= 6 ? "#ffd54f" : "#35db7e";
+
   timerRing.style.background = `conic-gradient(${color} ${degrees}deg, rgba(255,255,255,0.08) 0deg)`;
 }
 
@@ -457,7 +463,7 @@ function handleCardClick(index) {
   state.locked = true;
   stopTimer();
 
-  setTimeout(resolveTurn, 650);
+  setTimeout(resolveTurn, 600);
 }
 
 function resolveTurn() {
@@ -488,9 +494,11 @@ function findPairInThree(indexes) {
 
   for (const index of indexes) {
     const id = state.deck[index].pairId;
+
     if (seen[id] !== undefined) {
       return [seen[id], index];
     }
+
     seen[id] = index;
   }
 
@@ -509,25 +517,27 @@ function handleSuccess(pairIndexes, extraIndexes) {
     state.deck[index].opened = false;
   });
 
-  player.score += 1;
   player.matches += 1;
   player.hitStreak += 1;
   player.maxHitStreak = Math.max(player.maxHitStreak, player.hitStreak);
   player.missStreak = 0;
 
+  let gainedPoints = 1;
   let message = `${player.name} acertou um par!`;
   audioManager.match();
 
   if (player.hitStreak % 2 === 0) {
-    player.score += 1;
+    gainedPoints += 1;
     player.bonusPoints += 1;
-    message += " Ganhou +1 bola bônus por 2 acertos seguidos!";
+    message += " Ganhou +1 bola bônus!";
     audioManager.bonus();
   }
 
+  player.score = Math.min(WIN_SCORE, player.score + gainedPoints);
+
   state.allowedFlips = player.hitStreak >= 3 ? 3 : 2;
 
-  if (state.allowedFlips === 3) {
+  if (state.allowedFlips === 3 && player.score < WIN_SCORE) {
     message += " Agora pode virar 3 cartas.";
   }
 
@@ -550,7 +560,6 @@ function handleFailure(indexes) {
   const player = state.players[state.currentPlayer];
   player.hitStreak = 0;
   player.missStreak += 1;
-  player.misses += 1;
   state.allowedFlips = 2;
 
   let message = `${player.name} não encontrou par.`;
@@ -558,7 +567,7 @@ function handleFailure(indexes) {
   if (player.missStreak >= 3) {
     player.skipNextTurn = true;
     player.missStreak = 0;
-    message += " Errou 3 rodadas seguidas e perderá a próxima vez.";
+    message += " Vai perder a próxima vez.";
   }
 
   setTimeout(() => {
@@ -574,7 +583,7 @@ function handleFailure(indexes) {
     updateBoardUI();
     renderPlayers();
     passTurn(message);
-  }, 450);
+  }, 420);
 }
 
 function handleTimerExpired() {
@@ -585,7 +594,6 @@ function handleTimerExpired() {
   const player = state.players[state.currentPlayer];
   player.hitStreak = 0;
   player.missStreak += 1;
-  player.misses += 1;
   state.allowedFlips = 2;
 
   if (player.missStreak >= 3) {
@@ -605,9 +613,9 @@ function handleTimerExpired() {
   updateBoardUI();
   renderPlayers();
 
-  let text = `${player.name} ficou sem tempo!`;
+  let text = `${player.name} ficou sem tempo.`;
   if (player.skipNextTurn) {
-    text += " Como errou 3 rodadas seguidas, perderá a próxima vez.";
+    text += " Vai perder a próxima vez.";
   }
 
   passTurn(text);
@@ -632,11 +640,13 @@ function passTurn(baseMessage = "") {
     state.allowedFlips = state.players[nextIndex].hitStreak >= 3 ? 3 : 2;
     updateCurrentTurnUI();
 
-    let fullMessage = baseMessage;
+    let fullMessage = baseMessage ? `${baseMessage} ` : "";
+
     if (skippedNames.length) {
-      fullMessage += ` ${skippedNames.join(", ")} perdeu${skippedNames.length > 1 ? "ram" : ""} a vez.`;
+      fullMessage += `${skippedNames.join(", ")} perdeu${skippedNames.length > 1 ? "ram" : ""} a vez. `;
     }
-    fullMessage += ` Agora é a vez de ${state.players[nextIndex].name}.`;
+
+    fullMessage += `Agora é a vez de ${state.players[nextIndex].name}.`;
 
     setMessage(fullMessage.trim());
     startTurnTimer();
@@ -655,18 +665,13 @@ function endGame(winner) {
   stopTimer();
   audioManager.win();
 
-  winnerTitle.textContent = `Jogador ${winner.name} venceu!`;
-  winnerSubtitle.textContent = `${winner.name} chegou a ${winner.score} ponto${winner.score > 1 ? "s" : ""} e conquistou a partida.`;
+  winnerTitle.textContent = `${winner.name} venceu!`;
+  winnerSubtitle.textContent = `${winner.name} chegou a ${WIN_SCORE} bolas e conquistou a partida.`;
 
   winnerStats.innerHTML = state.players.map(player => `
     <div class="winner-line">
       <strong>${player.name}</strong>
-      <span>
-        ⚽ ${Math.min(player.score, WIN_SCORE)} •
-        pares ${player.matches} •
-        bônus ${player.bonusPoints} •
-        melhor sequência ${player.maxHitStreak}
-      </span>
+      <span>Pares ${player.matches} • bônus ${player.bonusPoints} • melhor sequência ${player.maxHitStreak}</span>
     </div>
   `).join("");
 
