@@ -643,10 +643,10 @@ body {
 }
 
 .card-image {
-  width: 82%;
-  height: 82%;
-  object-fit: contain;
-  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* faz preencher tudo */
+  border-radius: 12px;
 }
 
 .card-fallback {
