@@ -612,17 +612,9 @@ body {
 .card-front {
   transform: rotateY(180deg);
   border: 2px solid rgba(255,255,255,0.18);
-  background:
-    radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 34%),
-    linear-gradient(180deg, #ffffff, #f0f7ff 55%, #ddeefe);
-  color: #0d2744;
-  padding: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.9),
-    0 8px 16px rgba(0,0,0,0.12);
+  background: none; /* remove fundo branco */
+  padding: 0; /* remove margem interna */
+  overflow: hidden; /* garante que imagem não saia */
 }
 
 .memory-card.matched .card-front {
@@ -637,16 +629,15 @@ body {
 .card-art {
   width: 100%;
   height: 100%;
-  display: grid;
-  place-items: center;
   position: relative;
 }
 
 .card-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: cover; /* faz preencher tudo */
-  border-radius: 12px;
+  object-fit: cover;
 }
 
 .card-fallback {
