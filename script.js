@@ -364,7 +364,7 @@ function buildBoard() {
               alt="${card.nome}"
               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
             />
-            <div class="card-fallback">${card.emoji}</div>
+            <div class="card-fallback"></div>
           </div>
         </div>
       </div>
