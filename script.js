@@ -11,16 +11,16 @@ const CARD_LIBRARY = [
   { id: "trofeu", nome: "Troféu", imagem: "img/trofeu.png", emoji: "🏆" },
   { id: "luva", nome: "Luva", imagem: "img/luva.png", emoji: "🧤" },
   { id: "gol", nome: "Gol", imagem: "img/gol.png", emoji: "🥅" },
-  { id: "bandeira", nome: "Bandeira", imagem: "img/bandeira.png", emoji: "🚩" },
+  { id: "bandeira", nome: "Bandeira", imagem: "img/placar.png", emoji: "🚩" },
   { id: "camisa", nome: "Camisa", imagem: "img/camisa.png", emoji: "👕" },
   { id: "cartao", nome: "Cartão", imagem: "img/cartao.png", emoji: "🟨" },
-  { id: "estadio", nome: "Estádio", imagem: "img/estadio.png", emoji: "🏟️" },
+  { id: "estadio", nome: "Estádio", imagem: "img/goleiro.png", emoji: "🏟️" },
   { id: "medalha", nome: "Medalha", imagem: "img/medalha.png", emoji: "🎖️" },
   { id: "apito", nome: "Apito", imagem: "img/apito.png", emoji: "📯" },
-  { id: "tecnico", nome: "Técnico", imagem: "img/tecnico.png", emoji: "🧢" },
+  { id: "tecnico", nome: "Técnico", imagem: "img/escudo.png", emoji: "🧢" },
   { id: "torcida", nome: "Torcida", imagem: "img/torcida.png", emoji: "📣" },
   { id: "capitao", nome: "Capitão", imagem: "img/capitao.png", emoji: "👑" },
-  { id: "campo", nome: "Campo", imagem: "img/campo.png", emoji: "🌱" }
+  { id: "campo", nome: "Campo", imagem: "img/gol2.png", emoji: "🌱" }
 ];
 
 const BACK_IMAGE = "img/costas.png";
